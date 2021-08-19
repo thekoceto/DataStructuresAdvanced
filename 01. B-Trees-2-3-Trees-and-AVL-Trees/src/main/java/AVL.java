@@ -1,4 +1,3 @@
-import java.util.Collection;
 import java.util.function.Consumer;
 
 public class AVL<T extends Comparable<T>> {
@@ -44,11 +43,72 @@ public class AVL<T extends Comparable<T>> {
             node.right = this.insert(node.right, item);
         }
 
-
-
+        node = balance(node, item);
 
         updateHeight(node);
+
         return node;
+    }
+
+    private Node<T>  balance(Node<T> node, T item) {
+        int balanceFactor = getBalanceFactor(node);
+
+        if (balanceFactor > 1) {
+            // ----- Right Right Case -----
+            //       rotateLeft(2)
+            //   2        >>        5
+            //  / \       >>     /     \
+            // a   5      >>    2       8
+            //    / \     >>  / \      / \
+            //   b   8    >> a   b    c   d
+            //      / \   >>
+            //     c   d  >>
+
+            // ----- Right Left Case -----
+            //   rotateRight(8)    rotateLeft(2)
+            //   2      >>   2        >>        5
+            //  / \     >>  / \       >>     /     \
+            // a   8    >> a   5      >>    2       8
+            //    / \   >>    / \     >>  / \      / \
+            //   5   d  >>   b   8    >> a   b    c   d
+            //  / \     >>      / \   >>
+            // b   c    >>     c   d  >>
+
+            if (item.compareTo(node.left.value) > 0)
+                node.left = rotateLeft(node.left);
+            node = rotateRight(node);
+        }
+        else if (balanceFactor < -1) {
+            // ----- Left Left Case -----
+            //       rotateRight(2)
+            //       8    >>        5
+            //      / \   >>     /     \
+            //     5   d  >>    2       8
+            //    / \     >>  / \      / \
+            //   2   c    >> a   b    c   d
+            //  / \       >>
+            // a   b      >>
+
+            // ----- Left Right Case -----
+            //   rotateLeft(8)    rotateRight(2)
+            //       8    >>       8   >>        5
+            //      / \   >>      / \  >>     /     \
+            //     2   d  >>     5   d >>    2       8
+            //    / \     >>    / \    >>  / \      / \
+            //   a   5    >>   2   c   >> a   b    c   d
+            //      / \   >>  / \      >>
+            //     b   c  >> a   b     >>
+
+            if (item.compareTo(node.right.value) < 0)
+                node.right = rotateRight(node.right);
+            node = rotateLeft(node);
+        }
+
+        return node;
+    }
+
+    private int getBalanceFactor(Node<T> node) {
+        return getHeight(node.left) - getHeight(node.right);
     }
 
     private Node<T> search(Node<T> node, T item) {
@@ -78,36 +138,59 @@ public class AVL<T extends Comparable<T>> {
     }
 
     private Node<T> rotateRight (Node<T> node) {
-        //         [p(5)]     >>      [p(2)]
-        //        /      \    >>     /     \
-        //    [l(2)]   [r(#)] >> [l(#)]  [r(5)]
-        //    /    \          >>         /    \
-        // [l(#)] [r(3)]      >>      [l(3)] [r(#)]
+        //     5   >>   2
+        //    / \  >>  / \
+        //   2   # >> #   5
+        //  / \    >>    / \
+        // #   3   >>   3   #
 
-        Node<T> parent = node.left;
-        node.left = parent.right;
-        parent.right = node;
+        Node<T> top = node.left;
+        node.left = node.left.right;
+        top.right = node;
 
         updateHeight(node);
-        updateHeight(parent);
+        updateHeight(top);
 
-        return parent;
+        return top;
     }
 
     private Node<T> rotateLeft (Node<T> node) {
-        //      [p(2)]        >>         [p(5)]
-        //     /     \        >>        /      \
-        // [l(#)]  [r(5)]     >>    [l(2)]   [r(#)]
-        //         /    \     >>    /    \
-        //      [l(3)] [r(#)] >> [l(#)] [r(3)]
+        //   2     >>     5
+        //  / \    >>    / \
+        // #   5   >>   2   #
+        //    / \  >>  / \
+        //   3   # >> #   3
 
-        Node<T> parent = node.right;
-        node.right = parent.left;
-        parent.left = node;
+        Node<T> top = node.right;
+        node.right = node.right.left;
+        top.left = node;
 
         updateHeight(node);
-        updateHeight(parent);
+        updateHeight(top);
 
-        return parent;
+        return top;
+    }
+
+    // ------------------
+    public String inOrderPrint() {
+        StringBuilder output = new StringBuilder();
+        if (this.root != null)
+            inOrderPrint(output, "", this.root);
+        return output.toString();
+    }
+
+    private void inOrderPrint(StringBuilder output, String indent, Node<T> current) {
+
+        if (current.right != null)
+            this.inOrderPrint(output, indent + "    ", current.right);
+
+        output
+                .append(indent)
+                .append(current.value).append("-").append(current.height)
+                .append(System.lineSeparator());
+
+        if (current.left != null)
+            this.inOrderPrint(output, indent + "    ", current.left);
+
     }
 }

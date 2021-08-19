@@ -11,5 +11,4 @@ public class Node<T extends Comparable<T>> {
         this.height = 1;
     }
 
-
 }
