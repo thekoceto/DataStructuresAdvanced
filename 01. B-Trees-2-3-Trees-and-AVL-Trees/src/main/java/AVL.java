@@ -54,16 +54,6 @@ public class AVL<T extends Comparable<T>> {
         int balanceFactor = getBalanceFactor(node);
 
         if (balanceFactor > 1) {
-            // ----- Right Right Case -----
-            //       rotateLeft(2)
-            //   2        >>        5
-            //  / \       >>     /     \
-            // a   5      >>    2       8
-            //    / \     >>  / \      / \
-            //   b   8    >> a   b    c   d
-            //      / \   >>
-            //     c   d  >>
-
             // ----- Right Left Case -----
             //   rotateRight(8)    rotateLeft(2)
             //   2      >>   2        >>        5
@@ -74,21 +64,21 @@ public class AVL<T extends Comparable<T>> {
             //  / \     >>      / \   >>
             // b   c    >>     c   d  >>
 
+            // ----- Right Right Case -----
+            //       rotateLeft(2)
+            //   2        >>        5
+            //  / \       >>     /     \
+            // a   5      >>    2       8
+            //    / \     >>  / \      / \
+            //   b   8    >> a   b    c   d
+            //      / \   >>
+            //     c   d  >>
+
             if (item.compareTo(node.left.value) > 0)
                 node.left = rotateLeft(node.left);
             node = rotateRight(node);
         }
         else if (balanceFactor < -1) {
-            // ----- Left Left Case -----
-            //       rotateRight(2)
-            //       8    >>        5
-            //      / \   >>     /     \
-            //     5   d  >>    2       8
-            //    / \     >>  / \      / \
-            //   2   c    >> a   b    c   d
-            //  / \       >>
-            // a   b      >>
-
             // ----- Left Right Case -----
             //   rotateLeft(8)    rotateRight(2)
             //       8    >>       8   >>        5
@@ -98,6 +88,16 @@ public class AVL<T extends Comparable<T>> {
             //   a   5    >>   2   c   >> a   b    c   d
             //      / \   >>  / \      >>
             //     b   c  >> a   b     >>
+
+            // ----- Left Left Case -----
+            //       rotateRight(2)
+            //       8    >>        5
+            //      / \   >>     /     \
+            //     5   d  >>    2       8
+            //    / \     >>  / \      / \
+            //   2   c    >> a   b    c   d
+            //  / \       >>
+            // a   b      >>
 
             if (item.compareTo(node.right.value) < 0)
                 node.right = rotateRight(node.right);
@@ -133,7 +133,7 @@ public class AVL<T extends Comparable<T>> {
                 getHeight(node.right) + 1;
     }
 
-    private <T extends Comparable<T>> int getHeight(Node<T> node) {
+    private static <T extends Comparable<T>> int getHeight(Node<T> node) {
         return node == null ? 0 : node.height;
     }
 
