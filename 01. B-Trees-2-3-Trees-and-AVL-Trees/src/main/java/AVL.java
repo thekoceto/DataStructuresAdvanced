@@ -54,6 +54,30 @@ public class AVL<T extends Comparable<T>> {
         int balanceFactor = getBalanceFactor(node);
 
         if (balanceFactor > 1) {
+            // ----- Left Right Case -----
+            //   rotateLeft(8)    rotateRight(2)
+            //       8    >>       8   >>       5
+            //      / \   >>      / \  >>    /     \
+            //     2   d  >>     5   d >>   2       8
+            //    / \     >>    / \    >>  / \     / \
+            //   a   5    >>   2   c   >> a   b   c   d
+            //      / \   >>  / \      >>
+            //     b   c  >> a   b     >>
+
+            // ----- Left Left Case -----
+            //       rotateRight(2)
+            //       8    >>        5
+            //      / \   >>     /     \
+            //     5   d  >>    2       8
+            //    / \     >>  / \      / \
+            //   2   c    >> a   b    c   d
+            //  / \       >>
+            // a   b      >>
+            if (item.compareTo(node.left.value) > 0)
+                node.left = rotateLeft(node.left);
+            node = rotateRight(node);
+        }
+        else if (balanceFactor < -1) {
             // ----- Right Left Case -----
             //   rotateRight(8)    rotateLeft(2)
             //   2      >>   2        >>        5
@@ -73,32 +97,6 @@ public class AVL<T extends Comparable<T>> {
             //   b   8    >> a   b    c   d
             //      / \   >>
             //     c   d  >>
-
-            if (item.compareTo(node.left.value) > 0)
-                node.left = rotateLeft(node.left);
-            node = rotateRight(node);
-        }
-        else if (balanceFactor < -1) {
-            // ----- Left Right Case -----
-            //   rotateLeft(8)    rotateRight(2)
-            //       8    >>       8   >>        5
-            //      / \   >>      / \  >>     /     \
-            //     2   d  >>     5   d >>    2       8
-            //    / \     >>    / \    >>  / \      / \
-            //   a   5    >>   2   c   >> a   b    c   d
-            //      / \   >>  / \      >>
-            //     b   c  >> a   b     >>
-
-            // ----- Left Left Case -----
-            //       rotateRight(2)
-            //       8    >>        5
-            //      / \   >>     /     \
-            //     5   d  >>    2       8
-            //    / \     >>  / \      / \
-            //   2   c    >> a   b    c   d
-            //  / \       >>
-            // a   b      >>
-
             if (item.compareTo(node.right.value) < 0)
                 node.right = rotateRight(node.right);
             node = rotateLeft(node);
