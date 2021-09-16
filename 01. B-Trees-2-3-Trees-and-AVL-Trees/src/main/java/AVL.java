@@ -55,7 +55,7 @@ public class AVL<T extends Comparable<T>> {
 
         if (balanceFactor > 1) {
             // ----- Left Right Case -----
-            //   rotateLeft(8)    rotateRight(2)
+            //   rotateLeft(2)    rotateRight(8)
             //       8    >>       8   >>       5
             //      / \   >>      / \  >>    /     \
             //     2   d  >>     5   d >>   2       8
@@ -65,7 +65,7 @@ public class AVL<T extends Comparable<T>> {
             //     b   c  >> a   b     >>
 
             // ----- Left Left Case -----
-            //       rotateRight(2)
+            //       rotateRight(8)
             //       8    >>        5
             //      / \   >>     /     \
             //     5   d  >>    2       8
@@ -73,6 +73,7 @@ public class AVL<T extends Comparable<T>> {
             //   2   c    >> a   b    c   d
             //  / \       >>
             // a   b      >>
+
             if (item.compareTo(node.left.value) > 0)
                 node.left = rotateLeft(node.left);
             node = rotateRight(node);
@@ -138,9 +139,9 @@ public class AVL<T extends Comparable<T>> {
     private Node<T> rotateRight (Node<T> node) {
         //     5   >>   2
         //    / \  >>  / \
-        //   2   # >> #   5
+        //   2   b >> a   5
         //  / \    >>    / \
-        // #   3   >>   3   #
+        // a   3   >>   3   b
 
         Node<T> top = node.left;
         node.left = node.left.right;
@@ -155,9 +156,9 @@ public class AVL<T extends Comparable<T>> {
     private Node<T> rotateLeft (Node<T> node) {
         //   2     >>     5
         //  / \    >>    / \
-        // #   5   >>   2   #
+        // a   5   >>   2   b
         //    / \  >>  / \
-        //   3   # >> #   3
+        //   3   b >> a   3
 
         Node<T> top = node.right;
         node.right = node.right.left;
@@ -170,25 +171,25 @@ public class AVL<T extends Comparable<T>> {
     }
 
     // ------------------
-    public String inOrderPrint() {
+    public String inOrderPrint(boolean include) {
         StringBuilder output = new StringBuilder();
         if (this.root != null)
-            inOrderPrint(output, "", this.root);
+            inOrderPrint(output, "", this.root, include);
         return output.toString();
     }
 
-    private void inOrderPrint(StringBuilder output, String indent, Node<T> current) {
+    private void inOrderPrint(StringBuilder output, String indent, Node<T> current, boolean include) {
 
         if (current.right != null)
-            this.inOrderPrint(output, indent + "    ", current.right);
+            this.inOrderPrint(output, indent + "   ", current.right, include);
 
-        output
-                .append(indent)
-                .append(current.value).append("-").append(current.height)
-                .append(System.lineSeparator());
+        output.append(indent).append(current.value);
+        if (include)
+            output.append(":").append(getBalanceFactor(current));
+        output.append(System.lineSeparator());
 
         if (current.left != null)
-            this.inOrderPrint(output, indent + "    ", current.left);
+            this.inOrderPrint(output, indent + "   ", current.left, include);
 
     }
 }
